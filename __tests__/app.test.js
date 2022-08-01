@@ -30,7 +30,7 @@ describe("GET Requests", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
-          const topics = body;
+          const { topics } = body;
 
           expect(topics).toBeInstanceOf(Array);
           expect(topics).toHaveLength(3);
