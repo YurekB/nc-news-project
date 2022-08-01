@@ -13,12 +13,20 @@ afterAll(() => {
 });
 
 describe("Error Handling", () => {
-  test("status 404: responds with a message telling user that that endpoint does not exist", () => {
+  test("status 404:responds with an error message if passed an endpoint that does not exist", () => {
     return request(app)
       .get("/api/NonExistant")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("No such endpoint!");
+      });
+  });
+  test("status 404: responds with an error message if passed an article id that does not exist", () => {
+    return request(app)
+      .get("/api/articles/1000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that id!");
       });
   });
 });
@@ -42,6 +50,31 @@ describe("GET Requests", () => {
               })
             );
           });
+        });
+    });
+  });
+
+  describe("/api/articles/:article_id", () => {
+    test("status 200: responds with an article object with given id and all properties", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { article } = body;
+
+          expect(article).toBeInstanceOf(Object);
+
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: 1,
+              body: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
         });
     });
   });
