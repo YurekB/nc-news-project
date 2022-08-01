@@ -11,3 +11,9 @@ File 2 - .env.development
 inside the file add:
 
 PGDATABASE=nc_news
+
+////////////////////////////////////////
+
+functions:
+
+getTopics - returns an array of all topics
