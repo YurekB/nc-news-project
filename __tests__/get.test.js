@@ -12,7 +12,18 @@ afterAll(() => {
   return db.end();
 });
 
-describe.only("GET Requests", () => {
+describe("Error Handling", () => {
+  test("status 404: responds with a message telling user that that endpoint does not exist", () => {
+    return request(app)
+      .get("/api/NonExistant")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No such endpoint!");
+      });
+  });
+});
+
+describe("GET Requests", () => {
   describe("/api/topics", () => {
     test("status 200: responds with an array of topic objects, each with 'slug' and 'description' properties", () => {
       return request(app)
