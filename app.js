@@ -3,6 +3,7 @@ const { getTopics } = require("./controllers/get.controllers");
 
 const app = express();
 
+
 app.get("/api/topics", getTopics);
 
 app.all("/*", (req, res) => {
