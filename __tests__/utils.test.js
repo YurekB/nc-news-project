@@ -1,21 +1,8 @@
-const app = require("../app");
-const request = require("supertest");
 const {
   convertTimestampToDate,
   createRef,
   formatComments,
 } = require("../db/seeds/utils");
-const db = require("../db/connection");
-const seed = require("../db/seeds/seed");
-const data = require("../db/data/test-data/index");
-
-beforeEach(() => {
-  return seed(data);
-});
-
-afterAll(() => {
-  return db.end();
-});
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -113,31 +100,5 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
-  });
-});
-
-describe.only("GET Requests", () => {
-  describe("/api/topics", () => {
-    test("status 200: responds with an array of topic objects, each with 'slug' and 'description' properties", () => {
-      return request(app)
-        .get("/api/topics")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual([
-            {
-              description: "The man, the Mitch, the legend",
-              slug: "mitch",
-            },
-            {
-              description: "Not dogs",
-              slug: "cats",
-            },
-            {
-              description: "what books are made of",
-              slug: "paper",
-            },
-          ]);
-        });
-    });
   });
 });
