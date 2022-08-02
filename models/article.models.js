@@ -22,6 +22,12 @@ exports.updateArticleById = async (id, body) => {
       "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",
       [updatedNum, id]
     );
+    if (updatedObj[0].votes < 0) {
+      return Promise.reject({
+        status: 400,
+        msg: "Cannot have less than 0 votes!",
+      });
+    }
     return updatedObj[0];
   }
 };

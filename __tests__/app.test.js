@@ -29,16 +29,6 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("No article found with that id!");
       });
   });
-  test("status 400: responds with an error message when trying to patch with a value that cant be used", () => {
-    const update = { inc_votes: "bad request" };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(update)
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid value being patched!");
-      });
-  });
 });
 
 describe("GET Requests", () => {
@@ -132,6 +122,16 @@ describe("PATCH Requests", () => {
               votes: 0,
             })
           );
+        });
+    });
+    test("if passed a number that will take the total to less than 0, throws an error", () => {
+      const newObj = { inc_votes: -150 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(newObj)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Cannot have less than 0 votes!");
         });
     });
   });
