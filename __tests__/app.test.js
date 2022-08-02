@@ -29,6 +29,36 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("No article found with that id!");
       });
   });
+  test("status 404: responds with an error message if trying to patch to an article id that does not exist", () => {
+    const newObj = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/500")
+      .send(newObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that id!");
+      });
+  });
+  test("status 400: responds with an error message if trying to patch to an article with a value that isnt a number", () => {
+    const newObj = { inc_votes: "NaN" };
+    return request(app)
+      .patch("/api/articles/500")
+      .send(newObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid value being patched!");
+      });
+  });
+  test("status 404: responds with an error message if trying to patch an empty object", () => {
+    const newObj = {};
+    return request(app)
+      .patch("/api/articles/500")
+      .send(newObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid value being patched!");
+      });
+  });
 });
 
 describe("GET Requests", () => {

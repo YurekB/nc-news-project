@@ -22,6 +22,12 @@ exports.updateArticleById = async (id, body) => {
       "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",
       [updatedNum, id]
     );
+    if (updatedObj.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "No article found with that id!",
+      });
+    }
     if (updatedObj[0].votes < 0) {
       return Promise.reject({
         status: 400,
