@@ -43,3 +43,29 @@ exports.updateArticleById = async (id, body) => {
     return updatedObj[0];
   }
 };
+
+exports.fetchArticles = async () => {
+  const { rows: articles } = await db.query("SELECT * FROM articles;");
+
+  if (articles.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: "No article found with that id!",
+    });
+  }
+  const { rows: comments } = await db.query(
+    "SELECT * FROM articles INNER JOIN comments ON articles.article_id = comments.article_id"
+  );
+
+  const updatedArt = articles.map((article) => {
+    const commArr = comments.filter((comment) => {
+      if (comment.article_id === article.article_id) {
+        return comment;
+      }
+    });
+
+    article.comment_count = commArr.length;
+    return article;
+  });
+  return updatedArt;
+};
