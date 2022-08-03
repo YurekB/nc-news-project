@@ -107,6 +107,29 @@ describe("GET Requests", () => {
           );
         });
     });
+    test("status 200: updated to also include a comment_count property", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { article } = body;
+
+          expect(article).toBeInstanceOf(Object);
+
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: 1,
+              body: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+    });
   });
   describe("/api/users", () => {
     test("status 200: responds with an array of user objects, each with username, name and avatar_url properties", () => {
