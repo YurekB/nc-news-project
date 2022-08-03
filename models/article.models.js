@@ -1,16 +1,22 @@
 const db = require("../db/connection.js");
 
-exports.fetchArticleById = (id) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [id])
-    .then(({ rows: res }) => {
-      if (res.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "No article found with that id!",
-        });
-      } else return res[0];
+exports.fetchArticleById = async (id) => {
+  const { rows: article } = await db.query(
+    "SELECT * FROM articles WHERE articles.article_id = $1;",
+    [id]
+  );
+  if (article.length === 0) {
+    return Promise.reject({
+      status: 404,
+      msg: "No article found with that id!",
     });
+  }
+  const { rows: comments } = await db.query(
+    "SELECT * FROM articles INNER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1;",
+    [id]
+  );
+  article[0].comment_count = comments.length;
+  return article[0];
 };
 
 exports.updateArticleById = async (id, body) => {
