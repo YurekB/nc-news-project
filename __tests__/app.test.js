@@ -93,6 +93,7 @@ describe("GET Requests", () => {
 
           expect(articles).toBeInstanceOf(Array);
           expect(articles).toHaveLength(12);
+          expect(articles).toBeSortedBy("created_at", { descending: true });
           articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({

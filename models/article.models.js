@@ -45,7 +45,9 @@ exports.updateArticleById = async (id, body) => {
 };
 
 exports.fetchArticles = async () => {
-  const { rows: articles } = await db.query("SELECT * FROM articles;");
+  const { rows: articles } = await db.query(
+    "SELECT * FROM articles ORDER BY created_at DESC;"
+  );
 
   if (articles.length === 0) {
     return Promise.reject({
