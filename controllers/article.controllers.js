@@ -1,3 +1,4 @@
+const { ident } = require("pg-format");
 const {
   fetchArticleById,
   updateArticleById,
@@ -40,9 +41,12 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleCommentsById = (req, res, next) => {
   const { article_id } = req.params;
-  fetchArticleCommentsById(article_id)
+  Promise.all([
+    fetchArticleById(article_id),
+    fetchArticleCommentsById(article_id),
+  ])
     .then((response) => {
-      res.status(200).send({ comments: response });
+      res.status(200).send({ comments: response[1] });
     })
     .catch((err) => {
       next(err);
