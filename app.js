@@ -5,6 +5,7 @@ const {
   patchArticleById,
   getArticles,
   getArticleCommentsById,
+  postCommentByArticleId,
 } = require("./controllers/article.controllers");
 const { getUsers } = require("./controllers/user.controllers");
 
@@ -23,6 +24,8 @@ app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 app.get("/api/users", getUsers);
 
 app.patch("/api/articles/:article_id", patchArticleById);
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "No such endpoint!" });

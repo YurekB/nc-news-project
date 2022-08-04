@@ -67,6 +67,16 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("No article found with that id!");
       });
   });
+  test("status 404: responds with an error message if trying to post to an article id that does not exist", () => {
+    const postObj = { username: "rogersop", body: "i love this article!" };
+    return request(app)
+      .post("/api/articles/500/comments")
+      .send(postObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found with that id!");
+      });
+  });
 });
 
 describe("GET Requests", () => {
@@ -266,6 +276,31 @@ describe("PATCH Requests", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Cannot have less than 0 votes!");
+        });
+    });
+  });
+});
+
+describe("POST Requests", () => {
+  describe("/api/articles/:article_id/comments", () => {
+    test("status 200: posts sent comment to database and responds with new comment object", () => {
+      const postObj = { username: "rogersop", body: "i love this article!" };
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(postObj)
+        .expect(200)
+        .then(({ body }) => {
+          const { comment } = body;
+          expect(comment).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+              comment_id: expect.any(Number),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
         });
     });
   });
