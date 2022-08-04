@@ -46,28 +46,13 @@ exports.updateArticleById = async (id, body) => {
 
 exports.fetchArticles = async () => {
   const { rows: articles } = await db.query(
-    "SELECT * FROM articles ORDER BY created_at DESC;"
-  );
-
-  if (articles.length === 0) {
-    return Promise.reject({
-      status: 404,
-      msg: "No article found with that id!",
-    });
-  }
-  const { rows: comments } = await db.query(
-    "SELECT * FROM articles INNER JOIN comments ON articles.article_id = comments.article_id;"
+    "SELECT articles.*, COUNT(comment_id) FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY created_at DESC;"
   );
 
   const updatedArt = articles.map((article) => {
     delete article.body;
-    const commArr = comments.filter((comment) => {
-      if (comment.article_id === article.article_id) {
-        return comment;
-      }
-    });
-
-    article.comment_count = commArr.length;
+    article.comment_count = parseInt(article.count);
+    delete article.count;
     return article;
   });
 
