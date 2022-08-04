@@ -51,3 +51,11 @@ exports.fetchArticles = async () => {
 
   return articles;
 };
+
+exports.fetchArticleCommentsById = async (id) => {
+  const { rows: comments } = await db.query(
+    "SELECT * FROM comments WHERE article_id = $1",
+    [id]
+  );
+  return comments;
+};
