@@ -84,7 +84,7 @@ describe("GET Requests", () => {
     });
   });
   describe("/api/articles", () => {
-    test.only("status 200: responds with an array of article objects, all including comment_count. articles sorted by date in desc. order", () => {
+    test("status 200: responds with an array of article objects, all including comment_count. articles sorted by date in desc. order", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
