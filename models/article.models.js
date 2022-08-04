@@ -43,3 +43,11 @@ exports.updateArticleById = async (id, body) => {
     return updatedObj[0];
   }
 };
+
+exports.fetchArticles = async () => {
+  const { rows: articles } = await db.query(
+    "SELECT articles.author,articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY created_at DESC;"
+  );
+
+  return articles;
+};
