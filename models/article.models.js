@@ -56,10 +56,12 @@ exports.fetchArticles = async () => {
     });
   }
   const { rows: comments } = await db.query(
-    "SELECT * FROM articles INNER JOIN comments ON articles.article_id = comments.article_id"
+    "SELECT * FROM articles INNER JOIN comments ON articles.article_id = comments.article_id;"
   );
+  console.log(comments);
 
   const updatedArt = articles.map((article) => {
+    delete article.body;
     const commArr = comments.filter((comment) => {
       if (comment.article_id === article.article_id) {
         return comment;
@@ -69,5 +71,6 @@ exports.fetchArticles = async () => {
     article.comment_count = commArr.length;
     return article;
   });
+
   return updatedArt;
 };

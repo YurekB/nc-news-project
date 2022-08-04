@@ -84,7 +84,7 @@ describe("GET Requests", () => {
     });
   });
   describe("/api/articles", () => {
-    test("status 200: responds with an array of article objects, all including comment_count. articles sorted by date in desc. order", () => {
+    test.only("status 200: responds with an array of article objects, all including comment_count. articles sorted by date in desc. order", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -100,7 +100,6 @@ describe("GET Requests", () => {
                 author: expect.any(String),
                 title: expect.any(String),
                 article_id: expect.any(Number),
-                body: expect.any(String),
                 topic: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
