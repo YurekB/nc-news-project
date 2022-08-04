@@ -1,4 +1,6 @@
+const { application } = require("express");
 const db = require("../db/connection.js");
+const format = require("pg-format");
 
 exports.fetchArticleById = async (id) => {
   const { rows: article } = await db.query(
