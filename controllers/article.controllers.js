@@ -4,6 +4,7 @@ const {
   updateArticleById,
   fetchArticles,
   fetchArticleCommentsById,
+  postCommByArticleId,
 } = require("../models/article.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -47,6 +48,21 @@ exports.getArticleCommentsById = (req, res, next) => {
   ])
     .then((response) => {
       res.status(200).send({ comments: response[1] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const body = req.body;
+  Promise.all([
+    fetchArticleById(article_id),
+    postCommByArticleId(article_id, body),
+  ])
+    .then((response) => {
+      res.status(200).send({ comment: response[1] });
     })
     .catch((err) => {
       next(err);
