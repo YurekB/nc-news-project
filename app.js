@@ -12,10 +12,13 @@ const {
   deleteComment,
   getCommentById,
 } = require("./controllers/comment.controllers");
+const { getApi } = require("./controllers/api.controllers");
 
 const app = express();
 
 app.use(express.json());
+
+app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
 

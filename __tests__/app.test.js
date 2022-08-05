@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+const endpointData = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -120,6 +121,17 @@ describe("Error Handling", () => {
 });
 
 describe("GET Requests", () => {
+  describe("/api", () => {
+    test("status 200: responds with json file containing info about all endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          const { json } = body;
+          expect(json).toEqual(endpointData);
+        });
+    });
+  });
   describe("/api/comments/:comment_id", () => {
     test("status 200: responds with an object of given comment id", () => {
       return request(app)
