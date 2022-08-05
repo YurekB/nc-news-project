@@ -77,9 +77,38 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("No article found with that id!");
       });
   });
+  test("status 404: responds with an error message if trying to delete a comment id that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/500")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comment found with that id!");
+      });
+  });
 });
 
 describe("GET Requests", () => {
+  describe("/api/comments/:comment_id", () => {
+    test("status 200: responds with an object of given comment id", () => {
+      return request(app)
+        .get("/api/comments/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { comment } = body;
+          expect(comment).toBeInstanceOf(Object);
+          expect(comment).toEqual(
+            expect.objectContaining({
+              body: expect.any(String),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              comment_id: 1,
+              article_id: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+  });
   describe("/api/topics", () => {
     test("status 200: responds with an array of topic objects, each with 'slug' and 'description' properties", () => {
       return request(app)
@@ -128,6 +157,34 @@ describe("GET Requests", () => {
         });
     });
   });
+  // describe("/api/articles (queries)", () => {
+  //   describe("responds with correct articles based on given query", () => {
+  //     test("status 200: responds with articles array sorted by given query", () => {
+  //       return request(app)
+  //         .get("/api/articles?sort_by=created_at&order=asc&topic=mitch")
+  //         .expect(200)
+  //         .then(({ body }) => {
+  //           const { articles } = body;
+  //           expect(articles).toBeInstanceOf(Array);
+  //           expect(articles).toHaveLength(12);
+  //           expect(articles).toBeSortedBy("created_at", { descending: false });
+  //           articles.forEach((article) => {
+  //             expect(article).toEqual(
+  //               expect.objectContaining({
+  //                 author: expect.any(String),
+  //                 title: expect.any(String),
+  //                 article_id: expect.any(Number),
+  //                 topic: expect.any(String),
+  //                 created_at: expect.any(String),
+  //                 votes: expect.any(Number),
+  //                 comment_count: expect.any(Number),
+  //               })
+  //             );
+  //           });
+  //         });
+  //     });
+  //   });
+  // });
 
   describe("/api/articles/:article_id", () => {
     test("status 200: responds with an article object with given id and all properties", () => {
@@ -301,6 +358,18 @@ describe("POST Requests", () => {
               votes: expect.any(Number),
             })
           );
+        });
+    });
+  });
+});
+describe("DELETE Requests", () => {
+  describe("/api/comments/:comment_id", () => {
+    test("status 204: responds with no content", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
         });
     });
   });

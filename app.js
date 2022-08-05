@@ -8,6 +8,10 @@ const {
   postCommentByArticleId,
 } = require("./controllers/article.controllers");
 const { getUsers } = require("./controllers/user.controllers");
+const {
+  deleteComment,
+  getCommentById,
+} = require("./controllers/comment.controllers");
 
 const app = express();
 
@@ -23,9 +27,13 @@ app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 
 app.get("/api/users", getUsers);
 
+app.get("/api/comments/:comment_id", getCommentById);
+
 app.patch("/api/articles/:article_id", patchArticleById);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "No such endpoint!" });
