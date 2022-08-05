@@ -88,6 +88,27 @@ describe("Error Handling", () => {
 });
 
 describe("GET Requests", () => {
+  describe("/api/comments/:comment_id", () => {
+    test("status 200: responds with an object of given comment id", () => {
+      return request(app)
+        .get("/api/comments/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { comment } = body;
+          expect(comment).toBeInstanceOf(Object);
+          expect(comment).toEqual(
+            expect.objectContaining({
+              body: expect.any(String),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              comment_id: 1,
+              article_id: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+  });
   describe("/api/topics", () => {
     test("status 200: responds with an array of topic objects, each with 'slug' and 'description' properties", () => {
       return request(app)
