@@ -107,8 +107,6 @@ exports.fetchArticles = async (query) => {
   } else {
     queryStr += " DESC";
   }
-  console.log(queryStr);
-  console.log(queryValues);
 
   const { rows: articles } = await db.query(`${queryStr};`, queryValues);
 
