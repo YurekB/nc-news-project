@@ -78,7 +78,6 @@ describe("Error Handling", () => {
       });
   });
   test("status 404: responds with an error message if trying to delete a comment id that does not exist", () => {
-    const postObj = { username: "rogersop", body: "i love this article!" };
     return request(app)
       .delete("/api/comments/500")
       .expect(404)
