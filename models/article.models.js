@@ -46,10 +46,78 @@ exports.updateArticleById = async (id, body) => {
   }
 };
 
-exports.fetchArticles = async () => {
-  const { rows: articles } = await db.query(
-    "SELECT articles.author,articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY created_at DESC;"
+exports.fetchArticles = async (query) => {
+  const queryValues = [];
+  const acceptableQueries = ["sort_by", "topic", "order"];
+  const queryKeys = Object.keys(query);
+
+  if (
+    !acceptableQueries.includes(queryKeys[0]) &&
+    Object.entries(query).length !== 0
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid query key!" });
+  }
+
+  let queryStr = format(
+    "SELECT articles.author,articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id"
   );
+
+  if (Object.entries(query).length === 0) {
+    queryStr += " GROUP BY articles.article_id ORDER BY created_at DESC;";
+    const { rows: articles } = await db.query(`${queryStr}`);
+
+    return articles;
+  }
+  if (query.topic !== undefined) {
+    if (!["mitch"].includes(query.topic)) {
+      return Promise.reject({ status: 400, msg: "Invalid topic query!" });
+    }
+  }
+
+  if (query.sort_by !== undefined) {
+    if (
+      ![
+        "author",
+        "title",
+        "article_id",
+        "topic",
+        "created_at",
+        "votes",
+        "comment_count",
+      ].includes(query.sort_by)
+    ) {
+      return Promise.reject({ status: 400, msg: "Invalid sort_by query!" });
+    }
+  }
+
+  if (query.order !== undefined) {
+    if (!["asc", "desc"].includes(query.order)) {
+      return Promise.reject({ status: 400, msg: "Invalid order query!" });
+    }
+  }
+
+  if ("topic" in query) {
+    queryValues.push(query.topic);
+    queryStr += ` WHERE topic = $1`;
+  }
+
+  queryStr += " GROUP BY articles.article_id";
+
+  if ("sort_by" in query) {
+    queryStr += " ORDER BY";
+
+    queryStr += ` ${query.sort_by}`;
+  } else {
+    queryStr += " ORDER BY created_at";
+  }
+
+  if ("order" in query) {
+    queryStr += ` ${query.order}`;
+  } else {
+    queryStr += " DESC";
+  }
+
+  const { rows: articles } = await db.query(`${queryStr};`, queryValues);
 
   return articles;
 };
