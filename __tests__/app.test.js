@@ -202,13 +202,7 @@ describe("GET Requests", () => {
           articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
-                author: expect.any(String),
-                title: expect.any(String),
-                article_id: expect.any(Number),
-                topic: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                comment_count: expect.any(Number),
+                topic: "mitch",
               })
             );
           });
@@ -227,13 +221,7 @@ describe("GET Requests", () => {
           articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
-                author: expect.any(String),
-                title: expect.any(String),
-                article_id: expect.any(Number),
-                topic: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                comment_count: expect.any(Number),
+                topic: "mitch",
               })
             );
           });
@@ -248,19 +236,6 @@ describe("GET Requests", () => {
           expect(articles).toBeInstanceOf(Array);
           expect(articles).toHaveLength(12);
           expect(articles).toBeSortedBy("created_at", { descending: true });
-          articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                author: expect.any(String),
-                title: expect.any(String),
-                article_id: expect.any(Number),
-                topic: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                comment_count: expect.any(Number),
-              })
-            );
-          });
         });
     });
     test("status 200: if only given a topic, default sort by is the date descending", () => {
@@ -275,13 +250,7 @@ describe("GET Requests", () => {
           articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
-                author: expect.any(String),
-                title: expect.any(String),
-                article_id: expect.any(Number),
-                topic: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                comment_count: expect.any(Number),
+                topic: "mitch",
               })
             );
           });
