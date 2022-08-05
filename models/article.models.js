@@ -48,6 +48,15 @@ exports.updateArticleById = async (id, body) => {
 
 exports.fetchArticles = async (query) => {
   const queryValues = [];
+  const acceptableQueries = ["sort_by", "topic", "order"];
+  const queryKeys = Object.keys(query);
+
+  if (
+    !acceptableQueries.includes(queryKeys[0]) &&
+    Object.entries(query).length !== 0
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid query key!" });
+  }
 
   let queryStr = format(
     "SELECT articles.author,articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id"
