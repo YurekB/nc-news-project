@@ -110,12 +110,20 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("Invalid order query!");
       });
   });
-  test("status 400: respnds with an error message when passing get articles a query that is not accepted", () => {
+  test("status 400: responds with an error message when passing get articles a query that is not accepted", () => {
     return request(app)
       .get("/api/articles?author=icellusedkars")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid query key!");
+      });
+  });
+  test("status 404: responds with an error message when passed a username that does not exist", () => {
+    return request(app)
+      .get("/api/users/YurekBogucki")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No user found with that username!");
       });
   });
 });
@@ -360,6 +368,24 @@ describe("GET Requests", () => {
               );
             });
           });
+      });
+      describe("/api/users/:username", () => {
+        test("status 200: responds with a user object", () => {
+          return request(app)
+            .get("/api/users/rogersop")
+            .expect(200)
+            .then(({ body }) => {
+              const { user } = body;
+              expect(user).toBeInstanceOf(Object);
+              expect(user).toEqual(
+                expect.objectContaining({
+                  username: expect.any(String),
+                  avatar_url: expect.any(String),
+                  name: expect.any(String),
+                })
+              );
+            });
+        });
       });
     });
   });
