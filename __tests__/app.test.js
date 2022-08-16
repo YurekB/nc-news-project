@@ -156,6 +156,51 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("Invalid value being patched!");
       });
   });
+  test("status 404: responds with an error message if trying to post an article with an invalid topic", () => {
+    const postObj = {
+      author: "rogersop",
+      title: "Yureks test post article",
+      body: "i love this database!",
+      topic: "NOT A TOPIC",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(postObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("This topic does not exist!");
+      });
+  });
+  test("status 404: responds with an error message if trying to post an article with an invalid author", () => {
+    const postObj = {
+      author: "YurekB",
+      title: "Yureks test post article",
+      body: "i love this database!",
+      topic: "cats",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(postObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("This author does not exist!");
+      });
+  });
+  test("status 400: responds with an error message if trying to post an article with an invalid data type", () => {
+    const postObj = {
+      author: "rogersop",
+      title: "Yureks test post article",
+      body: "i love this database!",
+      topic: 57,
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(postObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid data being posted!");
+      });
+  });
 });
 
 describe("GET Requests", () => {
@@ -526,6 +571,35 @@ describe("POST Requests", () => {
               body: expect.any(String),
               article_id: expect.any(Number),
               comment_id: expect.any(Number),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
+    });
+  });
+  describe("/api/articles", () => {
+    test("status 200: posts sent article to database and responds with new article object", () => {
+      const postObj = {
+        author: "rogersop",
+        title: "Yureks test post article",
+        body: "i love this database!",
+        topic: "cats",
+      };
+      return request(app)
+        .post("/api/articles")
+        .send(postObj)
+        .expect(200)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: "rogersop",
+              title: "Yureks test post article",
+              body: "i love this database!",
+              topic: "cats",
+              article_id: expect.any(Number),
+              comment_count: expect.any(Number),
               created_at: expect.any(String),
               votes: expect.any(Number),
             })

@@ -132,3 +132,54 @@ exports.postCommByArticleId = async (id, objBody) => {
   );
   return comment[0];
 };
+
+exports.uploadArticle = async (objBody) => {
+  const { author, title, body, topic } = objBody;
+  const testDataArr = [author, title, body, topic];
+
+  for (let i = 0; i < testDataArr.length; i++) {
+    if (typeof testDataArr[i] !== "string") {
+      return Promise.reject({
+        status: 400,
+        msg: "Invalid data being posted!",
+      });
+    }
+  }
+
+  const { rows: topics } = await db.query("SELECT slug FROM topics;");
+  const topicsArr = topics.map((topic) => {
+    return topic.slug;
+  });
+
+  if (!topicsArr.includes(topic)) {
+    return Promise.reject({ status: 404, msg: "This topic does not exist!" });
+  }
+
+  const { rows: authors } = await db.query("SELECT username FROM users;");
+  const authorsArr = authors.map((author) => {
+    return author.username;
+  });
+
+  if (!authorsArr.includes(author)) {
+    return Promise.reject({ status: 404, msg: "This author does not exist!" });
+  }
+
+  if (!topicsArr.includes(topic)) {
+    return Promise.reject({ status: 404, msg: "This topic does not exist!" });
+  }
+
+  const { rows: article } = await db.query(
+    "INSERT INTO articles (title, topic, author ,body) VALUES ($1, $2, $3, $4) RETURNING *;",
+    [title, topic, author, body]
+  );
+
+  const article_id = article[0].article_id;
+
+  const { rows: comments } = await db.query(
+    "SELECT * FROM articles INNER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1;",
+    [article_id]
+  );
+  article[0].comment_count = comments.length;
+
+  return article[0];
+};
