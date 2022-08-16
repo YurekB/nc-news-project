@@ -23,3 +23,23 @@ exports.delComment = async (id) => {
   );
   return deletedCom;
 };
+
+exports.updateCommentById = async (id, body) => {
+  const updatedNum = body.inc_votes;
+  if (typeof updatedNum !== "number") {
+    return Promise.reject({ status: 400, msg: "Invalid value being patched!" });
+  } else {
+    const { rows: updatedObj } = await db.query(
+      "UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;",
+      [updatedNum, id]
+    );
+
+    if (updatedObj.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "No comment found with that id!",
+      });
+    }
+    return updatedObj[0];
+  }
+};

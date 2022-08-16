@@ -126,6 +126,36 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("No user found with that username!");
       });
   });
+  test("status 404: responds with an error message if trying to patch an empty object", () => {
+    const newObj = {};
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid value being patched!");
+      });
+  });
+  test("status 404: responds with an error message if trying to patch to a comment id that does not exist", () => {
+    const newObj = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/500")
+      .send(newObj)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comment found with that id!");
+      });
+  });
+  test("status 400: responds with an error message if trying to patch to a comment with a value that isnt a number", () => {
+    const newObj = { inc_votes: "NaN" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid value being patched!");
+      });
+  });
 });
 
 describe("GET Requests", () => {
@@ -414,7 +444,7 @@ describe("PATCH Requests", () => {
           );
         });
     });
-    test("status 200:updates given article and responds with the updated article (negative number)", () => {
+    test("status 200: updates given article and responds with the updated article (negative number)", () => {
       const newObj = { inc_votes: -100 };
       return request(app)
         .patch("/api/articles/1")
@@ -435,14 +465,46 @@ describe("PATCH Requests", () => {
           );
         });
     });
-    test("if passed a number that will take the total to less than 0, throws an error", () => {
-      const newObj = { inc_votes: -150 };
+  });
+  describe("/api/comments/:comment:id", () => {
+    test("status 200: updates given comment and responds with the updated comment", () => {
+      const newObj = { inc_votes: 100 };
       return request(app)
-        .patch("/api/articles/1")
+        .patch("/api/comments/1")
         .send(newObj)
-        .expect(400)
+        .expect(200)
         .then(({ body }) => {
-          expect(body.msg).toBe("Cannot have less than 0 votes!");
+          const { comment } = body;
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: expect.any(String),
+              votes: 116,
+              author: expect.any(String),
+              article_id: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("status 200: updates given comment and responds with the updated comment (negative number)", () => {
+      const newObj = { inc_votes: -15 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(newObj)
+        .expect(200)
+        .then(({ body }) => {
+          const { comment } = body;
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: expect.any(String),
+              votes: 1,
+              author: expect.any(String),
+              article_id: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
         });
     });
   });

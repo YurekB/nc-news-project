@@ -35,12 +35,7 @@ exports.updateArticleById = async (id, body) => {
         msg: "No article found with that id!",
       });
     }
-    if (updatedObj[0].votes < 0) {
-      return Promise.reject({
-        status: 400,
-        msg: "Cannot have less than 0 votes!",
-      });
-    }
+
     return updatedObj[0];
   }
 };
