@@ -62,6 +62,7 @@ exports.fetchArticles = async (query) => {
 
     return articles;
   }
+  //after empty array, util to check if topic even exists, if does, return empty, if not, error
 
   // if (query.topic !== undefined) {
   //   if (!["mitch"].includes(query.topic)) {
@@ -127,10 +128,17 @@ exports.fetchArticleCommentsById = async (id) => {
 
 exports.postCommByArticleId = async (id, objBody) => {
   const { username, body } = objBody;
+
+  const { rows: newUsername } = await db.query(
+    "INSERT INTO users ( username, name, avatar_url) VALUES ($1,'N/A', 'N/A');",
+    [username]
+  );
+
   const { rows: comment } = await db.query(
     "INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING *;",
     [body, username, id]
   );
+
   return comment[0];
 };
 
