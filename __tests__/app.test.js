@@ -94,14 +94,14 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("Invalid sort_by query!");
       });
   });
-  test("status 400: respnds with an error message when passing get articles an invalid topic query", () => {
-    return request(app)
-      .get("/api/articles?topic=badquery")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid topic query!");
-      });
-  });
+  // test("status 400: respnds with an error message when passing get articles an invalid topic query", () => {
+  //   return request(app)
+  //     .get("/api/articles?topic=badquery")
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe("Invalid topic query!");
+  //     });
+  // });
   test("status 400: respnds with an error message when passing get articles an invalid order query", () => {
     return request(app)
       .get("/api/articles?order=badquery")

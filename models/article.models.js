@@ -62,11 +62,12 @@ exports.fetchArticles = async (query) => {
 
     return articles;
   }
-  if (query.topic !== undefined) {
-    if (!["mitch"].includes(query.topic)) {
-      return Promise.reject({ status: 400, msg: "Invalid topic query!" });
-    }
-  }
+
+  // if (query.topic !== undefined) {
+  //   if (!["mitch"].includes(query.topic)) {
+  //     return Promise.reject({ status: 400, msg: "Invalid topic query!" });
+  //   }
+  // }
 
   if (query.sort_by !== undefined) {
     if (
