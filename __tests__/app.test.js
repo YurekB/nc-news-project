@@ -399,29 +399,29 @@ describe("GET Requests", () => {
           );
         });
     });
-    describe("/api/articles/:article_id/comments", () => {
-      test("status 200: responds with an array of comments for the given article_id", () => {
-        return request(app)
-          .get("/api/articles/1/comments")
-          .expect(200)
-          .then(({ body }) => {
-            const { comments } = body;
+  });
+  describe("/api/articles/:article_id/comments", () => {
+    test("status 200: responds with an array of comments for the given article_id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
 
-            expect(comments).toBeInstanceOf(Array);
-            expect(comments).toHaveLength(11);
-            comments.forEach((comment) => {
-              expect(comment).toEqual(
-                expect.objectContaining({
-                  comment_id: expect.any(Number),
-                  votes: expect.any(Number),
-                  created_at: expect.any(String),
-                  author: expect.any(String),
-                  body: expect.any(String),
-                })
-              );
-            });
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments).toHaveLength(11);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
           });
-      });
+        });
     });
     describe("/api/users", () => {
       test("status 200: responds with an array of user objects, each with username, name and avatar_url properties", () => {
@@ -511,7 +511,7 @@ describe("PATCH Requests", () => {
         });
     });
   });
-  describe("/api/comments/:comment:id", () => {
+  describe("/api/comments/:comment_id", () => {
     test("status 200: updates given comment and responds with the updated comment", () => {
       const newObj = { inc_votes: 100 };
       return request(app)
