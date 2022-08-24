@@ -128,11 +128,22 @@ exports.fetchArticleCommentsById = async (id) => {
 
 exports.postCommByArticleId = async (id, objBody) => {
   const { username, body } = objBody;
+  const userArr = [];
 
-  const { rows: newUsername } = await db.query(
-    "INSERT INTO users ( username, name, avatar_url) VALUES ($1,'N/A', 'N/A');",
-    [username]
-  );
+  const { rows: users } = await db.query("SELECT username FROM users;");
+
+  users.map((user) => {
+    userArr.push(user.username);
+  });
+
+  if (!userArr.includes(username)) {
+    const { rows: newUsername } = await db.query(
+      "INSERT INTO users ( username, name, avatar_url) VALUES ($1,'N/A', 'N/A') RETURNING username;",
+      [username]
+    );
+
+    userArr.push(newUsername[0].username);
+  }
 
   const { rows: comment } = await db.query(
     "INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING *;",

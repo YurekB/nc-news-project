@@ -558,7 +558,7 @@ describe("PATCH Requests", () => {
 describe("POST Requests", () => {
   describe("/api/articles/:article_id/comments", () => {
     test("status 200: posts sent comment to database and responds with new comment object", () => {
-      const postObj = { username: "randomNAme", body: "i love this article!" };
+      const postObj = { username: "yurek", body: "i love this article!" };
       return request(app)
         .post("/api/articles/3/comments")
         .send(postObj)
@@ -567,7 +567,7 @@ describe("POST Requests", () => {
           const { comment } = body;
           expect(comment).toEqual(
             expect.objectContaining({
-              author: "randomNAme",
+              author: "yurek",
               body: "i love this article!",
               article_id: expect.any(Number),
               comment_id: expect.any(Number),
