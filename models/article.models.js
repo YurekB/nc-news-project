@@ -42,8 +42,18 @@ exports.updateArticleById = async (id, body) => {
 
 exports.fetchArticles = async (query) => {
   const queryValues = [];
-  const acceptableQueries = ["sort_by", "topic", "order"];
+  const acceptableQueries = ["sort_by", "topic", "order", "limit"];
   const queryKeys = Object.keys(query);
+  let limitArticles = 10;
+  let page = 1;
+
+  if (query.p !== undefined && query.p !== 1) {
+    page = query.p;
+  }
+
+  if (query.limit !== undefined) {
+    limitArticles = query.limit;
+  }
 
   if (
     !acceptableQueries.includes(queryKeys[0]) &&
@@ -59,16 +69,18 @@ exports.fetchArticles = async (query) => {
   if (Object.entries(query).length === 0) {
     queryStr += " GROUP BY articles.article_id ORDER BY created_at DESC;";
     const { rows: articles } = await db.query(`${queryStr}`);
+    const pageCount = Math.ceil(articles.length / limitArticles);
 
-    return articles;
+    return {
+      articles: articles.slice(
+        page * limitArticles - limitArticles,
+        page * limitArticles
+      ),
+      page: parseInt(page),
+      pageCount: pageCount,
+      totalCount: articles.length,
+    };
   }
-  //after empty array, util to check if topic even exists, if does, return empty, if not, error
-
-  // if (query.topic !== undefined) {
-  //   if (!["mitch"].includes(query.topic)) {
-  //     return Promise.reject({ status: 400, msg: "Invalid topic query!" });
-  //   }
-  // }
 
   if (query.sort_by !== undefined) {
     if (
@@ -115,7 +127,28 @@ exports.fetchArticles = async (query) => {
 
   const { rows: articles } = await db.query(`${queryStr};`, queryValues);
 
-  return articles;
+  const pageCount = Math.ceil(articles.length / limitArticles);
+
+  if (query.p !== undefined) {
+    let page = parseInt(query.p);
+  }
+
+  if (!page) {
+    page = 1;
+  }
+  if (page > pageCount) {
+    page = pageCount;
+  }
+
+  return {
+    articles: articles.slice(
+      page * limitArticles - limitArticles,
+      page * limitArticles
+    ),
+    page: parseInt(page),
+    pageCount: pageCount,
+    totalCount: articles.length,
+  };
 };
 
 exports.fetchArticleCommentsById = async (id) => {
@@ -123,6 +156,7 @@ exports.fetchArticleCommentsById = async (id) => {
     "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;",
     [id]
   );
+
   return comments;
 };
 

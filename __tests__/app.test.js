@@ -94,14 +94,7 @@ describe("Error Handling", () => {
         expect(body.msg).toBe("Invalid sort_by query!");
       });
   });
-  // test("status 400: respnds with an error message when passing get articles an invalid topic query", () => {
-  //   return request(app)
-  //     .get("/api/articles?topic=badquery")
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("Invalid topic query!");
-  //     });
-  // });
+
   test("status 400: respnds with an error message when passing get articles an invalid order query", () => {
     return request(app)
       .get("/api/articles?order=badquery")
@@ -264,9 +257,9 @@ describe("GET Requests", () => {
         .expect(200)
         .then(({ body }) => {
           const { articles } = body;
-
+          expect(body.totalCount).toBe(12);
           expect(articles).toBeInstanceOf(Array);
-          expect(articles).toHaveLength(12);
+          expect(articles).toHaveLength(10);
           expect(articles).toBeSortedBy("created_at", { descending: true });
           articles.forEach((article) => {
             expect(article).toEqual(
@@ -284,6 +277,46 @@ describe("GET Requests", () => {
         });
     });
   });
+  describe("/api/articles (pagination)", () => {
+    test("status 200: responds with set number of articles", () => {
+      return request(app)
+        .get("/api/articles?limit=8&p=1")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(8);
+          expect(body.page).toBe(1);
+          expect(body.totalCount).toBe(12);
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("status 200: responds with set number of articles, defaults to 10", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(10);
+          expect(body.totalCount).toBe(12);
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("status 200: responds with set number of articles, can pick which page to recieve", () => {
+      return request(app)
+        .get("/api/articles?limit=8&p=2")
+        .expect(200)
+        .then(({ body }) => {
+          const { articles } = body;
+          expect(articles).toBeInstanceOf(Array);
+          expect(articles).toHaveLength(4);
+          expect(body.totalCount).toBe(12);
+          expect(body.page).toBe(2);
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
   describe("/api/articles (queries)", () => {
     test("status 200: responds with articles array using 3 queries", () => {
       return request(app)
@@ -292,7 +325,8 @@ describe("GET Requests", () => {
         .then(({ body }) => {
           const { articles } = body;
           expect(articles).toBeInstanceOf(Array);
-          expect(articles).toHaveLength(11);
+          expect(articles).toHaveLength(10);
+          expect(body.totalCount).toBe(11);
           expect(articles).toBeSortedBy("created_at", { descending: false });
           articles.forEach((article) => {
             expect(article).toEqual(
@@ -311,7 +345,8 @@ describe("GET Requests", () => {
         .then(({ body }) => {
           const { articles } = body;
           expect(articles).toBeInstanceOf(Array);
-          expect(articles).toHaveLength(11);
+          expect(articles).toHaveLength(10);
+          expect(body.totalCount).toBe(11);
           expect(articles).toBeSortedBy("created_at", { descending: true });
           articles.forEach((article) => {
             expect(article).toEqual(
@@ -329,7 +364,8 @@ describe("GET Requests", () => {
         .then(({ body }) => {
           const { articles } = body;
           expect(articles).toBeInstanceOf(Array);
-          expect(articles).toHaveLength(12);
+          expect(articles).toHaveLength(10);
+          expect(body.totalCount).toBe(12);
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
@@ -340,7 +376,8 @@ describe("GET Requests", () => {
         .then(({ body }) => {
           const { articles } = body;
           expect(articles).toBeInstanceOf(Array);
-          expect(articles).toHaveLength(11);
+          expect(articles).toHaveLength(10);
+          expect(body.totalCount).toBe(11);
           expect(articles).toBeSortedBy("created_at", { descending: true });
           articles.forEach((article) => {
             expect(article).toEqual(

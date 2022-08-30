@@ -34,7 +34,7 @@ exports.getArticles = (req, res, next) => {
   const query = req.query;
   fetchArticles(query)
     .then((response) => {
-      res.status(200).send({ articles: response });
+      res.status(200).send(response);
     })
     .catch((err) => {
       next(err);
