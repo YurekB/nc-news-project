@@ -64,7 +64,20 @@
     "description": "serves an array of all uers",
     "queries": [],
     "exampleResponse": {
-      "articles": [
+      "users": [
+        {
+          "username": "icellusedkars",
+          "name": "sam",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:user_id": {
+    "description": "serves a user object",
+    "queries": [],
+    "exampleResponse": {
+      "user": [
         {
           "username": "icellusedkars",
           "name": "sam",
@@ -100,6 +113,20 @@
       }
     }
   },
+  "PATCH /api/comments/:comment_id": {
+    "description": "takes an object with an inc_votes property, this updates the given comment with the value of inc_votes. serves the updated comment object",
+    "queries": [],
+    "takes": { "inc_votes": 100 },
+    "exampleResponse": {
+      "articles": {
+        "body": "Itaque quisquam est similique et est perspiciatis reprehenderit voluptatem autem. Voluptatem accusantium eius error adipisci quibusdam doloribus.",
+        "votes": 99,
+        "author": "tickle122",
+        "article_id": 18,
+        "created_at": 1590103140000
+      }
+    }
+  },
   "POST /api/articles/:article_id/comments": {
     "description": "takes an object with body and username properties, then adds them to the given article as a new comment. serves the posted comment",
     "queries": [],
@@ -111,6 +138,24 @@
         "author": "rogersop",
         "created_at": 1586179020000,
         "comment_id": 20
+      }
+    }
+  },
+  "POST /api/articles": {
+    "description": "allows you to post an article",
+    "queries": [],
+    "takes": {
+      "author": "Yurek",
+      "topic": "mitch",
+      "title": "test article",
+      "body": "this is my article, welcome"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 12,
+        "votes": 0,
+        "created_at": 1527695953341,
+        "comment_count": 0
       }
     }
   },
